@@ -3,7 +3,7 @@ package invetigacio;
 
 public class Nodos {
     int Id;
-    float Costo;
+    double Costo;
     int Vecinos[] = {};
     //Select significa que el nodo está seleccionado como parte de la solución
     boolean select;
@@ -11,10 +11,12 @@ public class Nodos {
     boolean cubierto;
     //Propiedades
 
-    Nodos(int id,float costo,int vecinos[]){
+    Nodos(int id,double costo,int vecinos[]){
         this.Id = id;
         this.Costo = costo;
         this.Vecinos = vecinos;
+        this.select=false;
+        this.cubierto=false;
     }
 
     Nodos(){

@@ -24,21 +24,19 @@ public class GetSheet
             XSSFWorkbook wb = new XSSFWorkbook(fis);   
             XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object  
             Iterator<Row> itr = sheet.iterator();    //iterating over excel file  
-
-            while (itr.hasNext())                 
+            int nrow=0;
+            while (itr.hasNext() && nrow<35)                 
             {   
-                int id=0;
-                float costo=0;
-                int vecinos[] = {};
                 Row row = itr.next();  
-                int nrow=0;
+                int id=0;
+                double costo=0;
+                int vecinos[] = {};
                 int ncol=0;
                 Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column  
                 while (cellIterator.hasNext())   
                 {  
                     Cell cell = cellIterator.next();  
                     ncol++;
-                    System.out.print(ncol+" ");
                     switch (cell.getCellType())               
                     {  
                         case Cell.CELL_TYPE_STRING:    //field that represents string cell type  
@@ -47,31 +45,44 @@ public class GetSheet
 
                         //SI ES NUMERICO SE ANALIZA EL VALOR
                         case Cell.CELL_TYPE_NUMERIC:    //field that represents number cell type 
+                            //System.out.print("vc: "+cell.getNumericCellValue() + "\t\t\t"); 
+                            
                             switch(ncol){
                                 case 1:
-                                    costo=Float.parseFloat(cell.getStringCellValue());
+                                    costo=cell.getNumericCellValue();
                                 break;
-                                case 2,3,4,5,6,7,8,9:
-                                    vecinos[ncol-2]=Integer.parseInt(cell.getStringCellValue());
+                                case 2:
+                                    id=(int)cell.getNumericCellValue();
                                 break;
-                                case 10:
-                                    id=Integer.parseInt(cell.getStringCellValue());
+                                case 3,4,5,6,7,8,9,10:
+                                    if(cell.getNumericCellValue()!=0){
+                                        int auxNeighbour[]= new int[vecinos.length];
+                                        for (int i=0;i<auxNeighbour.length;i++){
+                                            auxNeighbour[i]=vecinos[i];
+                                        }                      
+                                        vecinos=new int[ncol+1];
+                                        for (int i=0;i<auxNeighbour.length;i++){
+                                            vecinos[i]=auxNeighbour[i];
+                                        }
+                                        vecinos[ncol-3]=(int)cell.getNumericCellValue();
+                                    }  
                                 break;
                             }
-                            //System.out.print(cell.getNumericCellValue() + "\t\t\t");  
-                            break;  
-                        default:  
+                        break;  
                     }
+                }  
+                if (id!=0){
                     ArrNode[nrow]=new Nodos(id,costo,vecinos);
                     nrow++;
-                }  
-                System.out.println("");  
+                }
+  
             }
             wb.close();  //closed fix
         }  
         catch(Exception e)  
         {  
-            e.printStackTrace();  
+            System.out.println(e);
+            //e.printStackTrace();  
         }
     }  
 
