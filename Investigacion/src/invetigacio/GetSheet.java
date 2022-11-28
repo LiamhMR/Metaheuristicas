@@ -25,7 +25,7 @@ public class GetSheet
             XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object  
             Iterator<Row> itr = sheet.iterator();    //iterating over excel file  
             int nrow=0;
-            while (itr.hasNext() && nrow<35)                 
+            while (itr.hasNext())                 
             {   
                 Row row = itr.next();  
                 int id=0;
@@ -75,13 +75,11 @@ public class GetSheet
                     ArrNode[nrow]=new Nodos(id,costo,vecinos);
                     nrow++;
                 }
-  
             }
             wb.close();  //closed fix
         }  
         catch(Exception e)  
         {  
-            System.out.println(e);
             //e.printStackTrace();  
         }
     }  

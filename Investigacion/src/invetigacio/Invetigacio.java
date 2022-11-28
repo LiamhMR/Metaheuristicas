@@ -21,12 +21,12 @@ public class Invetigacio
      */
     public static void main(String[] args)
     {
-        boolean execute=false;
+        boolean execute=true;
         //int id = 2;
         //float costo = 1.0f;
         //int vecinos[] = {4,5};
         //int A[] = {};
-        GetSheet NewGS=new GetSheet();
+        GetSheet NewGS=new GetSheet();//FUNCIONA
         Nodos ArrSol[] = NewGS.ReturnArr(); 
         Nodos[] ArrNodos=NewGS.ReturnArr();
         Nodos Poblacion[][]=new Nodos[10][38]; 
@@ -40,28 +40,28 @@ public class Invetigacio
         //Soluciones Aleatorias y con heurísticas
         Random rand = new Random();
         for (int i=0;i<10;i++){
-            int random=rand.nextInt(3);
-            double maximocosto=50;
-            int NCount=30;
-            Nodos[] TrySol=new Nodos[38];
+            int random=rand.nextInt(10);
+            double maximocosto=10;
+            int NCount=20;
+            Nodos[] TrySol=new Nodos[2];
             switch(random)
             {
                 case 0,1,2:
                     do{
                         maximocosto++;
                         TrySol=minCosto(ArrNodos,maximocosto);
-                        System.out.println("uwu");
-                    }while(isValid(TrySol));
+                    }while(!isValid(TrySol));
                     Poblacion[i]=TrySol;
                 break;
                 case 4,5,6,7:
-                    Poblacion[i]=RandomSol(ArrNodos);
+                    TrySol=RandomSol(ArrNodos);
+                    Poblacion[i]=TrySol;
                 break;
                 case 8,9:
                     do{
                         NCount++;
                         TrySol=maxVecinos(ArrNodos, NCount);
-                    }while(isValid(TrySol));
+                    }while(!isValid(TrySol));
                     Poblacion[i]=TrySol;
                 break;
             }
@@ -184,18 +184,22 @@ public class Invetigacio
             double CurrentCost=10;
             int SelectNode=200;
             for (int i=0;i<lenghtN;i++){
-                System.out.println(i);
-                if (Arr[i].Costo<CurrentCost){
+                if (Arr[i].Costo<CurrentCost && Arr[i].select==false){
+                    System.out.println(Arr[SelectNode].select);
                     CurrentCost=Arr[i].Costo;
+                    System.out.println(CurrentCost);
                     SelectNode=i;
                     TotalCost=TotalCost+CurrentCost;
                 }
             }
             if(SelectNode!=200)
             {
+                System.out.println("Id seleccionado:"+Arr[SelectNode].Id);
                 Arr[SelectNode].select=true;
+                System.out.println(Arr[SelectNode].select);
             }
         }
+        System.out.println("Total Costo:"+TotalCost);
         return Arr;
     }
 
@@ -211,6 +215,7 @@ public class Invetigacio
 
         for (int i=0;i<Arr.length;i++){
             if (Arr[i].cubierto=false){
+                System.out.println("Sol no valido");
                 return false;
             }
         }
@@ -262,11 +267,15 @@ public class Invetigacio
     public static void printPoblación(Nodos[][] Poblacion){
         for (int i=0;i<Poblacion.length;i++){
             for(int k=0;k<Poblacion[i].length;k++){
+                if(Poblacion[i][k]==null){
+                    System.out.println(i+","+k+" es null uwu");
+
+                }
                 if (Poblacion[i][k].select=true){
                     System.out.print(Poblacion[i][k].Id + " ");
                 }
             }
-            System.out.print("\t\t\t");
+            System.out.println(" ");
         } 
     }
 }
