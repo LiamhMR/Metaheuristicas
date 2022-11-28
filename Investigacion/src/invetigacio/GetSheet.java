@@ -85,6 +85,13 @@ public class GetSheet
     }  
 
     public Nodos[] ReturnArr(){
-        return ArrNode;
+        Nodos NewArr[]=new Nodos[36];
+        for (int i=0;i<ArrNode.length;i++){  
+            int id=ArrNode[i].Id;
+            double costo=ArrNode[i].Costo;
+            int vecinos[] = ArrNode[i].Vecinos;
+            NewArr[i]=new Nodos(id, costo, vecinos);
+        }
+        return NewArr;
     }
 }  

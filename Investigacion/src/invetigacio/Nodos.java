@@ -19,7 +19,17 @@ public class Nodos {
         this.cubierto=false;
     }
 
+    Nodos(int id,double costo,int vecinos[],Boolean sel,boolean cover){
+        this.Id = id;
+        this.Costo = costo;
+        this.Vecinos = vecinos;
+        this.select=sel;
+        this.cubierto=cover;
+    }
+
     Nodos(){
+        Id=0;
+        Costo=0;
         select=false;
         cubierto=false;
     }
