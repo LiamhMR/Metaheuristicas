@@ -16,8 +16,6 @@ import java.util.Random;
 
 public class Invetigacio
 {
-    GetSheet NewGS=new GetSheet();
-    Nodos[] ArrNodos=NewGS.ReturnArr();
     /**
      * @param args the command line arguments
      */
@@ -28,30 +26,55 @@ public class Invetigacio
         //int vecinos[] = {4,5};
         double probabilidad_mutacion = 0.2;
         int A[] = {};
-        Nodos ArrSol[] = {}; 
+        GetSheet NewGS=new GetSheet();
+        Nodos ArrSol[] = NewGS.ReturnArr(); 
+        Nodos[] ArrNodos=NewGS.ReturnArr();
+        Nodos Poblacion[][]=new Nodos[10][38]; 
+        int p1[] = {};
+        int p2[] = {};
 
         // TODO code application logic here
         boolean fin = true;
         //Nodos nodo = new Nodos(id,costo,vecinos){};
+        //Soluciones Aleatorias y con heurísticas
+        Random rand = new Random();
+        for (int i=0;i<10;i++){
+            int random=rand.nextInt(10);
+            switch(random)
+            {
+                case 0,1,2:
+                    Poblacion[i]=minCosto(ArrNodos,50);
+                break;
+                case 4,5,6,7:
+                    
+                break;
+                case 8,9:
+                break;
+                default;
+            }
+                    
+        }
 
-
+        //Algoritmo genético
         while(!fin){
             //elitista
-            seleccion(ArrSol);
+            seleccion(Poblacion);
             //en un punto
-            cruzamiento();
+            cruzamiento(p1,p2);
             //aleatoria
             mutacion(probabilidad_mutacion,A);
         }
         
     }
 
-    public static Nodos[] seleccion(Nodos ArrSol[]) 
+    public static Nodos[] seleccion(Nodos poblacion[][]) 
     {
-        double costo = 0; 
-        for(int i = 0 ; i < ArrSol.length; i++){
-            
-            if(ArrSol[i].select){
+        double costo=0; 
+        double auxmin=81;
+        for(int i = 0 ; i < poblacion.length; i++){
+            for(int j = 0 ; i < poblacion[i].length;i++)
+            costo += poblacion[i][j].Costo;
+            if(){
                 costo += ArrSol[i].Costo;
             }
             costo = 0;
@@ -60,8 +83,16 @@ public class Invetigacio
     }
 
 
-    public static void cruzamiento()
+    public static void cruzamiento(int p1[],int p2[])
     {
+        //cambiar este numero
+        int punto_cruzamiento = 3;
+        int h1[] = p1;
+        int h2[] = p2;
+        for(int i = punto_cruzamiento ; i < p1.length ; i++){
+            h1[i] = p2[i];
+            h2[i] = p1[i];
+        }
         
     }
 
@@ -140,7 +171,24 @@ public class Invetigacio
         return Arr;
     }
 
-    public Nodos[] minVecinos(Nodos[] Arr){
+    //Genera una solución con los n(max) nodos con más vecinos  
+    public Nodos[] maxVecinos(Nodos[] Arr,int max){
+        int lenghtN=Arr.length;
+        Random rand = new Random();
+        for(int k=0;k<max;k++){
+            int CurrentNCount=0;
+            int SelectNode=200;
+            for (int i=0;i<lenghtN;i++){
+                if (Arr[i].Vecinos.length>CurrentNCount && Arr[i].select!=true){
+                    CurrentNCount=Arr[i].Vecinos.length;
+                    SelectNode=i;
+                }
+            }
+            if(SelectNode!=200)
+            {
+                Arr[SelectNode].select=true;
+            }
+        }
         return Arr;
     }
 
