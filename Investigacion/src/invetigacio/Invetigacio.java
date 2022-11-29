@@ -30,9 +30,13 @@ public class Invetigacio
         Nodos[] TrySol;
         for (int i=0;i<10;i++){
             int random=rand.nextInt(9);
-            double maximocosto=30;
-            int NCount=25;
-            int maxRandCount=30;
+
+            /* Variables que alterar para flexibilizar el desempeño de las primeras soluciones*/
+            double maximocosto=25; 
+            int NCount=15;
+            int maxRandCount=25;
+            /* */
+
             switch(random)
             {
                 case 0,1,2:
@@ -76,17 +80,27 @@ public class Invetigacio
  
         //Algoritmo genético
         int fin = 0;
+        int maxitr=50000; //CANTIDAD DE ITERACIONES CON METAHEURÍSTICA
+        //double arrBestSol[]=new double[maxitr];
         double probabilidad_mutacion = 0.3;
-        while(fin < 5000){
+        while(fin < maxitr){
             System.out.println("[ALGORITMO GENÉTICO ITR="+fin+"]"); //Número de iteración
             //elitista
             Nodos p1[] = seleccionp1(Poblacion);
             Nodos p2[] = seleccionp2(Poblacion,p1);
             Nodos hijos[][] = cruzamiento(p1,p2,NewGS.ReturnArr(),NewGS.ReturnArr());
             Nodos Newpoblacion[][] = mutacion(probabilidad_mutacion,hijos,Poblacion,NewGS.ReturnArr(),NewGS.ReturnArr());
+            //arrBestSol[fin]=getSolCost(Poblacion[bestSol(Poblacion)]);
             fin++;
         }
         printPoblación(Poblacion);
+        /*Para cálculo de media y desviación estandar
+        System.out.print("Ultimas mejores soluciones: ");
+        for(int i=0;i<arrBestSol.length;i++){
+            System.out.print(arrBestSol[i]+" ");
+        }
+        System.out.print("Media: "+Media(arrBestSol)+ "| Desviación estándar: "+ sqrtVar(arrBestSol, Media(arrBestSol)));
+        */
     }
     
     //selecciona al primer padre de forma elitista
@@ -196,12 +210,12 @@ public class Invetigacio
                 h1[cambio].select=true;
             }
             //System.out.println("nuevo numero = "+h1[posicion]);
-            System.out.println("Nueva mutación:");
-            printArr(h1);
+            //System.out.println("Nueva mutación:");
+            System.out.print("Mutación h1:");printArr(h1);
         }
         else
         {
-                System.out.println("no muta");
+                System.out.println("h1 no muta");
         }
 
 
@@ -216,12 +230,12 @@ public class Invetigacio
                 h2[cambio].select=true;
             }
             //System.out.println("nuevo numero = "+h1[posicion]);
-            System.out.println("Nueva mutación:");
-            printArr(h2);
+            //System.out.println("Nueva mutación:");
+            System.out.print("Mutación h2:");printArr(h2);
         }
         else
         {
-                System.out.println("no muta");
+                System.out.println("h2 no muta");
         }
         
         //printPoblación(poblacion);
@@ -243,7 +257,7 @@ public class Invetigacio
                     delInd=200;
                 }
             }
-            if(delInd!=200){
+            if(delInd!=200 && getSolCost(poblacion[delInd])>getSolCost(h1)){
                 poblacion=fillPob(poblacion,h1,delInd);
             }
         }else{
@@ -264,7 +278,7 @@ public class Invetigacio
                     delInd=200;
                 }
             }
-            if(delInd!=200 && equalSol(h2,poblacion[delInd])==false){
+            if(delInd!=200 && getSolCost(poblacion[delInd])>getSolCost(h2)){
                 poblacion=fillPob(poblacion,h2,delInd);
             }
         }else{
@@ -413,6 +427,7 @@ public class Invetigacio
             System.out.print("P:"+i+ " ::=>");
             printArr(Poblacion[i]);
         } 
+        System.out.println("Mejor solución P"+bestSol(Poblacion)+": Costo total:"+getSolCost(Poblacion[bestSol(Poblacion)]));
     }
 
     /** Imprime los id de los nodos seleccionados de una solución
@@ -543,13 +558,45 @@ public class Invetigacio
             if(Bruto[i].select==true){
                 Bruto[i].select=false;
                 if(isValid(Bruto)){
-                    i=Bruto.length;
-                    Arr[i-1].select=false;
+                    //i=Bruto.length;
+                    Arr[i].select=false;
                 }else{
                     Bruto[i].select=true;
                 }
             }
         }
+    }
+
+    public static int bestSol(Nodos[][] G){
+        double best=81;
+        int index=200;
+        for(int i=0;i<G.length;i++){
+            if(getSolCost(G[i])<best){
+                best=getSolCost(G[i]);
+                index=i;
+            }
+        }
+        return index;
+    }
+
+    public static double Media(double[] arrBest){
+        double total=0;
+        for(int i=0;i<arrBest.length;i++){
+            total +=arrBest[i];
+        }
+        return (total/arrBest.length);
+    }
+
+    public static double sqrtVar(double[] arrBest,double media){
+        double varianza=0;
+        for(int i = 0 ; i<arrBest.length; i++){
+            double rango;
+            rango = Math.pow(arrBest[i] - media,2f);
+            varianza = varianza + rango;
+        }
+        varianza = varianza / 10f;
+        double desviacion = Math.sqrt(varianza);
+        return desviacion;
     }
 }
 
