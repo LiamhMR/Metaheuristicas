@@ -14,16 +14,17 @@ public class GetSheet
 {  
     static Nodos ArrNode[]=new Nodos[36];
 
+
     GetSheet()   
     {  
         try  
         {  
-            File file = new File("Investigacion/src/ExcelInvOp.xlsx");   //creating a new file instance  
-            FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file  
-            //creating Workbook instance that refers to .xlsx file  
+            File file = new File("Investigacion/src/ExcelInvOp.xlsx");   //Crear instancia de archivo
+            FileInputStream fis = new FileInputStream(file);   
+            //Abrir libro EXCEL
             XSSFWorkbook wb = new XSSFWorkbook(fis);   
-            XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object  
-            Iterator<Row> itr = sheet.iterator();    //iterating over excel file  
+            XSSFSheet sheet = wb.getSheetAt(0);     //Crear una hoja
+            Iterator<Row> itr = sheet.iterator();    //Iterar sobre la hoja
             int nrow=0;
             while (itr.hasNext())                 
             {   
@@ -32,21 +33,21 @@ public class GetSheet
                 double costo=0;
                 int vecinos[] = {};
                 int ncol=0;
-                Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column  
+                Iterator<Cell> cellIterator = row.cellIterator();   //Columna
                 while (cellIterator.hasNext())   
                 {  
                     Cell cell = cellIterator.next();  
                     ncol++;
                     switch (cell.getCellType())               
                     {  
-                        case Cell.CELL_TYPE_STRING:    //field that represents string cell type  
+                        case Cell.CELL_TYPE_STRING:    //Si es texto se asume que es la columna de nombres, se omite 
                         //System.out.print(cell.getStringCellValue() + "\t\t\t"); //Nombre columna 
                         break;  
 
                         //SI ES NUMERICO SE ANALIZA EL VALOR
                         case Cell.CELL_TYPE_NUMERIC:    //field that represents number cell type 
                             //System.out.print("vc: "+cell.getNumericCellValue() + "\t\t\t"); 
-                            
+                            //Columna | 1:Costo | 2:Id | 3 al 10: los vecinos 
                             switch(ncol){
                                 case 1:
                                     costo=cell.getNumericCellValue();
@@ -72,11 +73,12 @@ public class GetSheet
                     }
                 }  
                 if (id!=0){
+                    //Añade el nodo
                     ArrNode[nrow]=new Nodos(id,costo,vecinos);
                     nrow++;
                 }
             }
-            wb.close();  //closed fix
+            wb.close();  //Cerrar libro excel
         }  
         catch(Exception e)  
         {  
@@ -84,6 +86,9 @@ public class GetSheet
         }
     }  
 
+    /**
+     * @return Retorna una instancia nueva con los datos de los nodos.
+     */
     public Nodos[] ReturnArr(){
         Nodos NewArr[]=new Nodos[36];
         for (int i=0;i<ArrNode.length;i++){  

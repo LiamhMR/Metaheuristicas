@@ -17,26 +17,19 @@ public class Invetigacio
     public static void main(String[] args)
     {
         //boolean execute=true;
-        //int id = 2;
-        //float costo = 1.0f;
-        //int vecinos[] = {4,5};
-        //int A[] = {};
+
         GetSheet NewGS=new GetSheet();//FUNCIONA
-        //Nodos ArrSol[] = NewGS.ReturnArr(); 
-        //printArr(ArrNodos);
         Nodos Poblacion[][]=new Nodos[10][38];
 
-        //int p1[] = {};
-        //int p2[] = {};
-
-        // TODO code application logic here
-        //Nodos nodo = new Nodos(id,costo,vecinos){};
-        //Soluciones Aleatorias y con heurísticas
+        /**Soluciones Aleatorias y con heurísticas - SE GENERA LA PRIMERA POBLACIÓN DE SOLUCIONES
+        * 30% : Con los nodos más baratos con costo máximo total de maximocosto.
+        * 40% : Soluciones generadas aleatoriamente.
+        * 30% : Soluciones generadas con un máximo de NCount nodos.
+        **/
         Random rand = new Random();
         Nodos[] TrySol;
         for (int i=0;i<10;i++){
             int random=rand.nextInt(9);
-            //System.out.println("RAND="+random+" itrN="+i);
             double maximocosto=30;
             int NCount=25;
             int maxRandCount=30;
@@ -44,13 +37,12 @@ public class Invetigacio
             {
                 case 0,1,2:
                     System.out.println("MIN TRY");
+                    //Mientras no se encuentren soluciones se flexibiliza el costo máximo total
                     do{
-                        maximocosto++;
+                        maximocosto++; 
                         TrySol=minCosto(NewGS.ReturnArr(),maximocosto);
                     }while(isValid(TrySol)==false);
-                    //printArr(TrySol);
                     Poblacion=fillPob(Poblacion,TrySol,i);
-                    //Poblacion[i]=TrySol;
                     System.out.print("S:X ::=>");
                     printArr(Poblacion[i]);
                 break;
@@ -67,10 +59,11 @@ public class Invetigacio
                     }
                 break;
                 case 7,8,9:
-                System.out.println("MAX NODOS");
+                    System.out.println("MAX NODOS");
+                    //Mientras no se hallen soluciones se flexibiliza la cantidad de nodos máximo.
                     do{
                         NCount++;
-                        TrySol=maxVecinos(NewGS.ReturnArr(), NCount);
+                        TrySol=maxNodos(NewGS.ReturnArr(), NCount);
                     }while(!isValid(TrySol));
                     Poblacion=fillPob(Poblacion,TrySol,i);
                     //Poblacion[i]=TrySol;
@@ -84,24 +77,19 @@ public class Invetigacio
         //Algoritmo genético
         int fin = 0;
         double probabilidad_mutacion = 0.3;
-        while(fin < 500){
-            System.out.println("[ALGORITMO GENÉTICO ITR="+fin+"]");
+        while(fin < 5000){
+            System.out.println("[ALGORITMO GENÉTICO ITR="+fin+"]"); //Número de iteración
             //elitista
             Nodos p1[] = seleccionp1(Poblacion);
             Nodos p2[] = seleccionp2(Poblacion,p1);
-            //System.out.println("selP1: ");
-            //printArr(p1);
-            //System.out.println("selP2: ");
-            //printArr(p2);
-            //System.out.println("Padres escogidos:");
-            //en un punto
             Nodos hijos[][] = cruzamiento(p1,p2,NewGS.ReturnArr(),NewGS.ReturnArr());
             Nodos Newpoblacion[][] = mutacion(probabilidad_mutacion,hijos,Poblacion,NewGS.ReturnArr(),NewGS.ReturnArr());
-            //Poblacion=Newpoblacion;
             fin++;
         }
         printPoblación(Poblacion);
     }
+    
+    //selecciona al primer padre de forma elitista
 
     public static Nodos[] seleccionp1(Nodos poblacion[][]) 
     {
@@ -110,8 +98,6 @@ public class Invetigacio
         double auxmin=81;
 
         int n = rand.nextInt(9);
-        //System.out.print("p1 rand:");
-        //printArr(poblacion[n]);
         Nodos[] padre=poblacion[n];
 
         for(int i = 0 ; i < poblacion.length; i++){
@@ -121,12 +107,10 @@ public class Invetigacio
                         padre = poblacion[i];
             }
         }
-        //System.out.print("p1: ");
-        //printArr(padre);
         return padre;
     }
 
-
+    // selecciona al segundo padre de manera elitista
 
     public static Nodos[] seleccionp2(Nodos poblacion[][],Nodos p1[]) 
     {
@@ -135,8 +119,6 @@ public class Invetigacio
         double auxmin=81;
         
         int n = rand.nextInt(9);
-        //System.out.print("p2 rand:");
-        //printArr(poblacion[n]);
         Nodos[] padre=poblacion[n];
         for(int i = 0 ; i < poblacion.length; i++){
             if(p1 != poblacion[i]){
@@ -147,11 +129,10 @@ public class Invetigacio
                 }
             }
         }
-        //System.out.print("p2: ");
-        //printArr(padre);
         return padre;
     }
-
+    // se entrega por parametros los padres 1 y 2 y genera el cruzamiento para formar 2 hijos 
+    //ademas el cruzamiento se hace en un punto 
 
     public static Nodos[][] cruzamiento(Nodos p1[],Nodos p2[],Nodos bruto1[],Nodos bruto2[])
     {
@@ -161,8 +142,7 @@ public class Invetigacio
 
         Nodos h1[]=cleanNode(bruto1);
         Nodos h2[]=cleanNode(bruto2);
-        //Nodos h1[] = p1;
-        //Nodos h2[] = p2;
+
         for(int i = 0 ; i < h1.length ; i++)
         {
             h1[i].select=p1[i].select;
@@ -194,7 +174,7 @@ public class Invetigacio
         return hijos;
     }
 
-
+    //hace la mutacion de los hijos si corresponde 
     public static Nodos[][] mutacion(double probabilidad_mutacion,Nodos[][] hijos,Nodos[][] poblacion,Nodos[] Bruto1,Nodos[] Bruto2)
     {
         Random rand = new Random();
@@ -294,8 +274,12 @@ public class Invetigacio
         return poblacion;
     }
 
-    //DEVUELVE UNA SOLUCIÓN
-    //Minimización de costo con heurística del mas liviano, retorna un arreglo con nodos marcados mientras el total no supere un máximo
+    /**
+     * Minimización de costo con heurística del mas liviano, retorna un arreglo con nodos marcados mientras el total no supere un máximo
+     * @param Arr
+     * @param max
+     * @return
+     */
     public static Nodos[] minCosto(Nodos[] Arr,double max){
         int lenghtN=Arr.length;
         double TotalCost=0;
@@ -320,15 +304,15 @@ public class Invetigacio
                 //System.out.println("Id seleccionado:"+Arr[SelectNode].Id);
                 Arr[SelectNode].select=true;
                 nodeCount++;
-                //System.out.println(Arr[SelectNode].select);
             }
-            //System.out.println("Cantidad select:"+nodeCount);
         }
-        //System.out.println("Total Costo:"+TotalCost);
         return Arr;
     }
 
-    //Comprueba que un arreglo solución sea válido - True si la solución es válida
+    /**Comprueba que un arreglo solución sea válido - True si la solución es válida
+     * @param Arr -->Solución
+     * @return Retorna True: si la solución es válida, False: en otro caso.
+     */
     public static boolean isValid(Nodos[] Arr){
         for (int i=0;i<Arr.length;i++){
             Arr[i].cubierto=false;
@@ -351,6 +335,11 @@ public class Invetigacio
         return true;
     }
 
+    /**Marca como cubierto el nodo mencionado
+     * @param Arr
+     * @param lookId
+     * @return Retorna una solución con el id:lookId marcado como cubierto
+     */
     public static Nodos[] putCover(Nodos[] Arr,int lookId){
         for (int i=0;i<Arr.length;i++){
             if (Arr[i].Id==lookId)
@@ -362,8 +351,12 @@ public class Invetigacio
         return Arr;
     }
 
-    //Genera una solución con los n(max) nodos con más vecinos  
-    public static Nodos[] maxVecinos(Nodos[] Arr,int max){
+    /**Genera una solución con un máximo de max nodos
+     * @param Arr Arreglo con todos los nodos
+     * @param max máxima cantidad de nodos
+     * @return
+     */
+    public static Nodos[] maxNodos(Nodos[] Arr,int max){
         int lenghtN=Arr.length;
         //Limpiar el arreglo por si acaso
         for (int i=0;i<lenghtN;i++){
@@ -393,7 +386,10 @@ public class Invetigacio
         return Arr;
     }
 
-    //Devuelve una solución aleatoria válida
+    /**Devuelve una solución aleatoria válida
+     * @param Arr
+     * @return
+     */
     public static Nodos[] RandomSol(Nodos[] Arr){
         //Limpiar el arreglo por si acaso
         for (int i=0;i<Arr.length;i++){
@@ -408,25 +404,20 @@ public class Invetigacio
         return Arr;
     }
 
+    
+    /** Imprime todas las soluciones de una población.
+     * @param Poblacion
+     */
     public static void printPoblación(Nodos[][] Poblacion){
         for (int i=0;i<Poblacion.length;i++){
             System.out.print("P:"+i+ " ::=>");
             printArr(Poblacion[i]);
-            /*
-            for(int k=0;k<Poblacion[i].length;k++){
-                if(Poblacion[i][k]==null){
-                    //System.out.println(i+","+k+" es null uwu");
-                }else{
-                    if (Poblacion[i][k].select==true){
-                        System.out.print(Poblacion[i][k].Id + " ");
-                    }
-                }
-            }
-            System.out.println(" ");
-            */
         } 
     }
 
+    /** Imprime los id de los nodos seleccionados de una solución
+     * @param Arr
+     */
     public static void printArr(Nodos[] Arr){
         double count=0;
         for (int i=0;i<Arr.length;i++){
@@ -440,6 +431,10 @@ public class Invetigacio
         System.out.println("");
     }
 
+    /** Obtener el costo total de una solución
+     * @param Arr
+     * @return Retorna el costo total de una solución
+     */
     public static double getSolCost(Nodos[] Arr){
         double count=0;
         for (int i=0;i<Arr.length;i++){
@@ -468,6 +463,10 @@ public class Invetigacio
         return count;
     }
 
+    /**Contador de nodos seleccionados
+     * @param Arr
+     * @return Retorna un entero con la cantidad de nodos seleccionados dentro del arreglo de nodos
+     */
     public static int countSelect(Nodos[] Arr){
         int count=0;
         for (int i=0;i<Arr.length;i++){
@@ -478,6 +477,10 @@ public class Invetigacio
         return count;
     }
 
+    /**
+     * @param Arr 
+     * @return Retorna una referencia a un arreglo de nodos sin nodos seleccionados
+     */
     public static Nodos[] cleanNode(Nodos[] Arr){
         for (int i=0;i<Arr.length;i++){
             Arr[i].select=false;
@@ -490,6 +493,12 @@ public class Invetigacio
         garbage.gc();
     }
 
+    /**
+     * @param G Población.
+     * @param Node Nodo a añadir a la población.
+     * @param index Indice donde debe añadirse.
+     * @return Retorna una referencia a la población.
+     */
     public static Nodos[][] fillPob(Nodos[][] G,Nodos[] Node,int index){
         for (int i=0;i<Node.length;i++){
             int Id=Node[i].Id;
@@ -501,9 +510,11 @@ public class Invetigacio
         }
         return G;
     }
-
-    /*
-     * RETORNA TRUE SI LAS SOLUCIONES SON IGUALES
+    
+    /**
+     * @param Arr1 Solucion A
+     * @param Arr2 Solucion B
+     * @return Retorna true si las dos soluciones/arreglo de nodos son el mismo.
      */
     public static boolean equalSol(Nodos[] Arr1,Nodos[] Arr2){
         for(int i=0;i<Arr1.length;i++){
@@ -514,6 +525,13 @@ public class Invetigacio
         return true;
     }
     
+
+    /**
+     * REFINADOR DE SOLUCIONES
+     * @param Arr -->Solución a refinar
+     * @param Bruto -->Elemento auxiliar
+     * Descarta nodos que están siendo cubiertos por otros nodos
+     */
     public static void killNode(Nodos[] Arr,Nodos[] Bruto){
 
         for(int i=0;i<Arr.length;i++){
