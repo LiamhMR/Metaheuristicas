@@ -32,9 +32,9 @@ public class Invetigacio
             int random=rand.nextInt(9);
 
             /* Variables que alterar para flexibilizar el desempeño de las primeras soluciones*/
-            double maximocosto=25; 
-            int NCount=15;
-            int maxRandCount=25;
+            double maximocosto=35; 
+            int NCount=30;
+            int maxRandCount=40;
             /* */
 
             switch(random)
@@ -80,7 +80,7 @@ public class Invetigacio
  
         //Algoritmo genético
         int fin = 0;
-        int maxitr=50000; //CANTIDAD DE ITERACIONES CON METAHEURÍSTICA
+        int maxitr=5000; //CANTIDAD DE ITERACIONES CON METAHEURÍSTICA
         //double arrBestSol[]=new double[maxitr];
         double probabilidad_mutacion = 0.3;
         while(fin < maxitr){
@@ -257,7 +257,8 @@ public class Invetigacio
                     delInd=200;
                 }
             }
-            if(delInd!=200 && getSolCost(poblacion[delInd])>getSolCost(h1)){
+            //Modificar >= o = a gusto según si se desea remplazar una solución del mismo coste.
+            if(delInd!=200 && getSolCost(poblacion[delInd])>=getSolCost(h1)){
                 poblacion=fillPob(poblacion,h1,delInd);
             }
         }else{
@@ -278,7 +279,8 @@ public class Invetigacio
                     delInd=200;
                 }
             }
-            if(delInd!=200 && getSolCost(poblacion[delInd])>getSolCost(h2)){
+            //Modificar >= o = a gusto según si se desea remplazar una solución del mismo coste.
+            if(delInd!=200 && getSolCost(poblacion[delInd])>=getSolCost(h2)){
                 poblacion=fillPob(poblacion,h2,delInd);
             }
         }else{
