@@ -1,14 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package invetigacio;
-import java.lang.management.GarbageCollectorMXBean;
 //import invetigacio.*;
 import java.util.Random;
-
-import org.apache.poi.ss.usermodel.PrintCellComments;
 
 /**
  *
@@ -24,13 +16,13 @@ public class Invetigacio
      */
     public static void main(String[] args)
     {
-        boolean execute=true;
+        //boolean execute=true;
         //int id = 2;
         //float costo = 1.0f;
         //int vecinos[] = {4,5};
         //int A[] = {};
         GetSheet NewGS=new GetSheet();//FUNCIONA
-        Nodos ArrSol[] = NewGS.ReturnArr(); 
+        //Nodos ArrSol[] = NewGS.ReturnArr(); 
         //printArr(ArrNodos);
         Nodos Poblacion[][]=new Nodos[10][38];
 
@@ -92,8 +84,8 @@ public class Invetigacio
         //Algoritmo genético
         int fin = 0;
         double probabilidad_mutacion = 0.3;
-        while(fin < 1000){
-            System.out.println("Ejecutando algoritmo genetico");
+        while(fin < 500){
+            System.out.println("[ALGORITMO GENÉTICO ITR="+fin+"]");
             //elitista
             Nodos p1[] = seleccionp1(Poblacion);
             Nodos p2[] = seleccionp2(Poblacion,p1);
@@ -104,7 +96,7 @@ public class Invetigacio
             //System.out.println("Padres escogidos:");
             //en un punto
             Nodos hijos[][] = cruzamiento(p1,p2,NewGS.ReturnArr(),NewGS.ReturnArr());
-            Nodos Newpoblacion[][] = mutacion(probabilidad_mutacion,hijos,Poblacion);
+            Nodos Newpoblacion[][] = mutacion(probabilidad_mutacion,hijos,Poblacion,NewGS.ReturnArr(),NewGS.ReturnArr());
             //Poblacion=Newpoblacion;
             fin++;
         }
@@ -203,15 +195,15 @@ public class Invetigacio
     }
 
 
-    public static Nodos[][] mutacion(double probabilidad_mutacion,Nodos[][] hijos,Nodos[][] poblacion)
+    public static Nodos[][] mutacion(double probabilidad_mutacion,Nodos[][] hijos,Nodos[][] poblacion,Nodos[] Bruto1,Nodos[] Bruto2)
     {
         Random rand = new Random();
         double mutarh1 = (double) Math.random();
         double mutarh2 = (double) Math.random();
         Nodos[] h1=hijos[0];
         Nodos[] h2=hijos[1];
-        System.out.println("Mutar con:");
-        printArr(hijos[0]);printArr(hijos[1]);
+        //System.out.println("Mutar con:");
+        //printArr(hijos[0]);printArr(hijos[1]);
         
         if(mutarh1 < probabilidad_mutacion)
         {
@@ -252,20 +244,33 @@ public class Invetigacio
                 System.out.println("no muta");
         }
         
+        //printPoblación(poblacion);
+
         if (isValid(h1)){
+            //DESCARTE
+            killNode(h1, Bruto1);
+
             double minc=0;
             int delInd=200;
             for(int k=0;k<poblacion.length;k++){
                 if (getSolCost(poblacion[k])>minc){
                     minc=getSolCost(poblacion[k]);
                     delInd=k;
+                }
+
+                if(equalSol(h1,poblacion[k])==true){
+                    k=poblacion.length;
+                    delInd=200;
                 }
             }
             if(delInd!=200){
                 poblacion=fillPob(poblacion,h1,delInd);
             }
+        }else{
+            System.out.println("Solución hijo 1 no válida");
         }
         if (isValid(h2)){
+            killNode(h2, Bruto2);
             double minc=0;
             int delInd=200;
             for(int k=0;k<poblacion.length;k++){
@@ -273,10 +278,17 @@ public class Invetigacio
                     minc=getSolCost(poblacion[k]);
                     delInd=k;
                 }
+
+                if(equalSol(h2,poblacion[k])==true){
+                    k=poblacion.length;
+                    delInd=200;
+                }
             }
-            if(delInd!=200){
+            if(delInd!=200 && equalSol(h2,poblacion[delInd])==false){
                 poblacion=fillPob(poblacion,h2,delInd);
             }
+        }else{
+            System.out.println("Solución hijo 2 no válida");
         }
 
         return poblacion;
@@ -490,8 +502,36 @@ public class Invetigacio
         return G;
     }
 
+    /*
+     * RETORNA TRUE SI LAS SOLUCIONES SON IGUALES
+     */
     public static boolean equalSol(Nodos[] Arr1,Nodos[] Arr2){
-        for(int i=0)
+        for(int i=0;i<Arr1.length;i++){
+            if(Arr1[i].select!=Arr2[i].select){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static void killNode(Nodos[] Arr,Nodos[] Bruto){
+
+        for(int i=0;i<Arr.length;i++){
+            Bruto[i].select=Arr[i].select;
+        }
+
+        
+        for(int i=0;i<Bruto.length;i++){
+            if(Bruto[i].select==true){
+                Bruto[i].select=false;
+                if(isValid(Bruto)){
+                    i=Bruto.length;
+                    Arr[i-1].select=false;
+                }else{
+                    Bruto[i].select=true;
+                }
+            }
+        }
     }
 }
 
