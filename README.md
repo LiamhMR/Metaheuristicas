@@ -1,3 +1,4 @@
+# Investigación de operaciones
 # TAREA 2 - METAHEURÍSTICAS Caso Ficticio WOMTEL
 
 # El proyecto está construido con 3 clases
@@ -15,8 +16,9 @@
 # Las variables alterables se encuentran explicadas debidamente dentro de los comentarios del código a qué corresponden. Junto con la variable maxitr que limita la cantidad de iteraciones de la metaheurística.
 # En la función de mutación puede cambiarse a gusto si remplazar o no soluciones del mismo coste en caso de que el coste de la nueva solución sea al menos igual que la peor solución de la población.
 
-# PD: Sabemos que existe una solución con 22 de costo total, pero no nos volvió a aparecer ;( 
-# PD2: Después de unas pruebas(Ya fuera de plazo), si se inician con soluciones iniciales más flexibles tendrá menos limitaciones al mutar y cruzar y puede generar mejores soluciones.
+# Anotaciónes: 
+ Se sabe que existe una solución con 22 de costo total, pero no se repitió.
+ Si se inician con soluciones iniciales más flexibles tendrá menos limitaciones al mutar y cruzar y puede generar mejores soluciones.
 
 # INTEGRANTES:
 # ALEXIS ARMIJO
